@@ -36,9 +36,8 @@
 </head>
 <body>
   <script>
-    // Verificar si el usuario realmente completó los 3 anuncios
+    // Verifica si el usuario completó los 3 anuncios
     const progreso = parseInt(localStorage.getItem("currentAd")) || 1;
-
     if (progreso <= 3) {
       window.location.href = "index.html";
     }
@@ -65,7 +64,7 @@
       alert("¡Key copiada al portapapeles!");
     }
 
-    // Limpiar progreso para una nueva sesión
+    // Limpiar progreso si deseas reiniciar
     localStorage.removeItem("currentAd");
   </script>
 </body>
