@@ -1,105 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Key.storm - Ver anuncios</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #171717;
-      color: #ADADAD;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      color: #ccc;
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
     .container {
-      max-width: 800px;
-      margin: auto;
-      background: #1B1B1B;
-      border-radius: 15px;
-      padding: 20px;
+      max-width: 600px;
+      width: 100%;
+      background: #1E1E1E;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.7);
+      padding: 25px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 15px;
+      color: #9F9F9F;
+    }
+    .ad-progress {
+      background: #2E2E2E;
+      border-radius: 20px;
+      padding: 8px 15px;
+      margin-bottom: 15px;
+      font-weight: 600;
+      font-size: 16px;
+      color: #bbb;
     }
     .timer {
-      font-size: 24px;
-      margin: 10px 0;
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #e0e0e0;
     }
-    .ad-video {
+    video.ad-video {
       width: 100%;
-      max-width: 600px;
       border-radius: 10px;
-      margin: 20px 0;
+      background: #000;
+      margin-bottom: 15px;
+      box-shadow: 0 0 8px #333;
     }
     button {
-      background: #3A3A3A;
-      color: #ADADAD;
+      background: #3A86FF;
+      color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 28px;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 18px;
+      transition: background-color 0.3s ease;
+      user-select: none;
     }
     button:hover {
-      background: #4A4A4A;
+      background: #2D6CE0;
+    }
+    button:disabled {
+      background: #555;
+      cursor: default;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Key.storm</h1>
-    <div id="progressText">Anuncio 1 de 3</div>
-    <div class="timer" id="timer">10</div>
-    <video id="adVideo" class="ad-video" autoplay muted loop></video>
-    <button onclick="startTimer()">Ver anuncio</button>
+    <div class="ad-progress" id="progress">Anuncio 1 de 3</div>
+
+    <div id="adContainer" class="ad-container">
+      <div class="timer" id="timer">10</div>
+      <video id="adVideo" class="ad-video" autoplay muted loop></video>
+      <button id="startBtn" onclick="startTimer()">Ver anuncio</button>
+    </div>
   </div>
 
   <script>
-    let timer;
+    // Siempre iniciar en checkpoint 1, sin guardar ni leer progreso
+    let currentAd = 1;
+
     let timeLeft = 10;
-    let currentAd = parseInt(localStorage.getItem("currentAd")) || 1;
+    let timer;
+    const progressEl = document.getElementById("progress");
+    const timerEl = document.getElementById("timer");
+    const videoEl = document.getElementById("adVideo");
+    const startBtn = document.getElementById("startBtn");
 
     const ads = [
       {
-        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=example1",
-        linkvertise: "https://linkvertise.com/12345/ad1"
+        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=48343d985109f182475893222912d92a9059333e&profile_id=164&oauth2_token_id=57447761",
+        link: "https://direct-link.net/1357320/0pjzktsAw4ds"
       },
       {
-        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=example2",
-        linkvertise: "https://linkvertise.com/12345/ad2"
+        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=48343d985109f182475893222912d92a9059333e&profile_id=164&oauth2_token_id=57447761",
+        link: "https://linkvertise.com/tu-enlace-checkpoint2"
       },
       {
-        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=example3",
-        linkvertise: "https://linkvertise.com/12345/ad3"
+        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=48343d985109f182475893222912d92a9059333e&profile_id=164&oauth2_token_id=57447761",
+        link: "https://linkvertise.com/tu-enlace-checkpoint3"
       }
     ];
 
+    updateUI();
+
+    function updateUI() {
+      progressEl.textContent = `Anuncio ${currentAd} de ${ads.length}`;
+      timerEl.textContent = timeLeft;
+      videoEl.src = ads[currentAd - 1].video;
+      videoEl.load();
+      videoEl.pause();
+      startBtn.disabled = false;
+      startBtn.textContent = "Ver anuncio";
+      videoEl.style.display = "block";
+    }
+
     function startTimer() {
-      if (currentAd > 3) return;
-
-      const video = document.getElementById("adVideo");
-      video.src = ads[currentAd - 1].video;
-      video.load();
-      video.play();
-
-      document.getElementById("progressText").textContent = `Anuncio ${currentAd} de 3`;
-      document.getElementById("timer").textContent = timeLeft;
+      startBtn.disabled = true;
+      timerEl.textContent = timeLeft;
+      videoEl.play();
 
       timer = setInterval(() => {
         timeLeft--;
-        document.getElementById("timer").textContent = timeLeft;
+        timerEl.textContent = timeLeft;
 
         if (timeLeft <= 0) {
           clearInterval(timer);
-          localStorage.setItem("currentAd", currentAd + 1);
-          window.location.href = ads[currentAd - 1].linkvertise;
+          // Al finalizar, redirige al link del checkpoint actual
+          window.location.href = ads[currentAd - 1].link;
         }
       }, 1000);
     }
-
-    function checkProgress() {
-      if (currentAd > 3) {
-        window.location.href = "key.html";
-      }
-    }
-
-    window.onload = checkProgress;
   </script>
 </body>
 </html>
