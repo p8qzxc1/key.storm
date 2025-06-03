@@ -78,17 +78,16 @@
 
     <div id="adContainer" class="ad-container">
       <div class="timer" id="timer">10</div>
-      <video id="adVideo" class="ad-video" autoplay muted loop></video>
+      <video id="adVideo" class="ad-video" muted loop></video>
       <button id="startBtn" onclick="startTimer()">Ver anuncio</button>
     </div>
   </div>
 
   <script>
-    // Siempre iniciar en checkpoint 1, sin guardar ni leer progreso
     let currentAd = 1;
-
     let timeLeft = 10;
     let timer;
+
     const progressEl = document.getElementById("progress");
     const timerEl = document.getElementById("timer");
     const videoEl = document.getElementById("adVideo");
@@ -96,15 +95,16 @@
 
     const ads = [
       {
-        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=48343d985109f182475893222912d92a9059333e&profile_id=164&oauth2_token_id=57447761",
+        // Video mp4 público y confiable para prueba
+        video: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm",
         link: "https://direct-link.net/1357320/0pjzktsAw4ds"
       },
       {
-        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=48343d985109f182475893222912d92a9059333e&profile_id=164&oauth2_token_id=57447761",
+        video: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm",
         link: "https://linkvertise.com/tu-enlace-checkpoint2"
       },
       {
-        video: "https://player.vimeo.com/external/495970197.sd.mp4?s=48343d985109f182475893222912d92a9059333e&profile_id=164&oauth2_token_id=57447761",
+        video: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm",
         link: "https://linkvertise.com/tu-enlace-checkpoint3"
       }
     ];
@@ -133,11 +133,20 @@
 
         if (timeLeft <= 0) {
           clearInterval(timer);
-          // Al finalizar, redirige al link del checkpoint actual
           window.location.href = ads[currentAd - 1].link;
         }
       }, 1000);
     }
+
+    // Manejar error de carga del video
+    videoEl.onerror = () => {
+      videoEl.style.display = "none";
+      const fallback = document.createElement("div");
+      fallback.textContent = "Video no disponible, haz clic en Ver anuncio para continuar.";
+      fallback.style.color = "#f44336";
+      fallback.style.margin = "20px 0";
+      document.getElementById("adContainer").insertBefore(fallback, startBtn);
+    };
   </script>
 </body>
 </html>
